@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PhishShield AI</title>
+  <style>
+    body {
+      width: 320px;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+    }
+    .header {
+      background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      color: white;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .content {
+      padding: 20px 16px;
+    }
+    .status-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-left: 4px solid #94a3b8;
+    }
+    .status-card.safe {
+      border-left-color: #10b981;
+    }
+    .status-card.phishing {
+      border-left-color: #ef4444;
+    }
+    .status-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+    .status-desc {
+      font-size: 0.85rem;
+      color: #475569;
+      margin: 0;
+      word-break: break-all;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #2563eb;
+    }
+    .btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+    .footer {
+      text-align: center;
+      padding: 12px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+    }
+    .loader {
+      display: none;
+      text-align: center;
+      margin-bottom: 16px;
+      color: #3b82f6;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🛡️ PhishShield AI</h1>
+  </div>
+  
+  <div class="content">
+    <div class="status-card" id="status-container">
+      <div class="status-title" id="status-title">Ready to Scan</div>
+      <p class="status-desc" id="status-url">Click 'Scan Current Page' to analyze.</p>
+    </div>
+    
+    <div class="loader" id="loader">Analyzing URL with Deep Learning...</div>
+    
+    <button class="btn" id="scan-btn">Scan Current Page</button>
+  </div>
+  
+  <div class="footer">
+    Zero-Trust Web Protection
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

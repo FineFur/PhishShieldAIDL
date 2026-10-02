@@ -1,0 +1,99 @@
+/* content.css - Injected into pages marked as Phishing */
+.phishshield-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647; /* Maximum possible z-index */
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.phishshield-card {
+  background: #1e293b;
+  border: 1px solid #ef4444;
+  border-radius: 12px;
+  padding: 2.5rem;
+  max-width: 500px;
+  box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);
+}
+
+.phishshield-title {
+  color: #ef4444;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.phishshield-text {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+.phishshield-feature-list {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.phishshield-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #fca5a5;
+  font-size: 0.95rem;
+}
+
+.phishshield-feature:last-child {
+  margin-bottom: 0;
+}
+
+.phishshield-button-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.phishshield-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.phishshield-btn-primary {
+  background: #ef4444;
+  color: white;
+}
+
+.phishshield-btn-primary:hover {
+  background: #dc2626;
+}
+
+.phishshield-btn-secondary {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+}
+
+.phishshield-btn-secondary:hover {
+  background: #334155;
+  color: white;
+}
