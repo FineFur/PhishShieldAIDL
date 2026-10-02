@@ -1,149 +1,184 @@
-# PhishShield AI
+# PhishShield AI 🛡️
 
 ## Intelligent Phishing Website Detection Using Deep Learning
 
-PhishShield AI is a full-stack machine learning application that detects phishing websites by analyzing URL characteristics using a deep-learning model. The system extracts 16 engineered features from a URL string and classifies it as **Phishing** or **Legitimate** with a confidence probability.
+PhishShield AI detects phishing websites by analyzing **18 engineered URL features** using a pure-Numpy deep-learning model — no TensorFlow required. It comes with a **Chrome Extension** for real-time browser protection, a **FastAPI backend**, and a **React dashboard**.
 
 > **Core Philosophy:** SCAN → DETECT → EXPLAIN → RECORD
 
 ---
 
+## ⚡ Quick Start — Extension Only (Recommended for New Users)
+
+> Just want to use the Chrome extension? You only need **Python** installed. No Node.js, no frontend setup needed.
+
+### Step 1 — Clone the Repository
+
+```bash
+git clone https://github.com/FineFur/PhishShieldAIDL.git
+cd PhishShieldAIDL
+```
+
+### Step 2 — Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Step 3 — Start the Backend
+
+```bash
+cd backend
+uvicorn main:app --host 127.0.0.1 --port 8000
+```
+
+✅ You should see:
+```
+INFO: Feature columns loaded: 18 features
+INFO: All artifacts loaded successfully!
+INFO: Uvicorn running on http://127.0.0.1:8000
+```
+
+> **Note:** The trained model weights (`model/numpy_mlp_weights.json`) and scaler (`model/scaler.pkl`) are already included in the repo — **no training needed**.
+
+### Step 4 — Load the Chrome Extension
+
+1. Open Chrome and go to `chrome://extensions`
+2. Enable **Developer mode** (top-right toggle)
+3. Click **"Load unpacked"**
+4. Select the `extension/` folder from the cloned repo
+5. The PhishShield 🛡️ icon will appear in your toolbar
+
+### Step 5 — Browse & Protect
+
+- Click the extension icon on any website to scan the current URL
+- A **SAFE** (green) or **RISK** (red) badge appears on the icon automatically
+- The popup shows phishing probability, risk level, and feature breakdown
+
+---
+
 ## Features
 
-- 🔍 **URL Scanning** — Analyze any URL for phishing indicators
-- 🧠 **Deep Learning Model** — Feed-forward neural network (MLP) trained on URL features
+- 🛡️ **Chrome Extension** — Real-time URL scanning on every page you visit
+- 🔍 **URL Scanning** — Analyzes any URL for phishing indicators
+- 🧠 **Deep Learning Model** — Pure-Numpy 2-layer MLP (no TensorFlow required)
+- 🎯 **Zphisher Detection** — Catches modern phishing toolkits (ngrok, 000webhost, Google Sites, loca.lt)
 - 📊 **Risk Assessment** — Low / Medium / High risk classification with probabilities
 - 💡 **Explainable Results** — Feature-level explanations for each analysis
-- 📋 **Scan History** — Persistent scan records stored in browser localStorage
+- 📋 **Scan History** — Persistent scan records in browser localStorage
 - 🔒 **Security Tips** — Educational content about phishing awareness
-- 🌙 **Dark/Light Mode** — Theme preference persisted across sessions
-- 📱 **Responsive Design** — Works on desktop, tablet, and mobile
-- 🛡️ **Safe Analysis** — Static URL feature extraction only; never visits target websites
+- 🛡️ **Safe Analysis** — Static URL feature extraction only; **never visits target websites**
 
 ---
 
 ## Technology Stack
 
-| Layer        | Technologies                            |
-| ------------ | --------------------------------------- |
-| **Frontend** | React.js, Vite, JavaScript, Axios, CSS  |
-| **Backend**  | Python, FastAPI, Uvicorn, Pydantic      |
-| **ML/DL**    | TensorFlow, Keras, Scikit-learn, Pandas |
-| **Data**     | CSV dataset with engineered features    |
-| **Storage**  | Browser localStorage                    |
+| Layer        | Technologies                                        |
+| ------------ | --------------------------------------------------- |
+| **Extension**| Chrome Extension (Manifest V3), JavaScript          |
+| **Frontend** | React.js, Vite, JavaScript, Axios, CSS              |
+| **Backend**  | Python, FastAPI, Uvicorn, Pydantic                  |
+| **ML/DL**    | Pure NumPy MLP (no TensorFlow), Pandas              |
+| **Storage**  | Browser localStorage                                |
 
 ---
 
 ## System Architecture
 
 ```
-User enters a URL
+Browser visits a URL
         ↓
-React frontend (Vite)
+Chrome Extension (content.js detects page load)
         ↓
-FastAPI backend (POST /predict)
+POST http://127.0.0.1:8000/predict
         ↓
-URL feature extraction (16 features)
+FastAPI Backend
+        ↓
+URL Feature Extraction (18 features)
         ↓
 StandardScaler preprocessing
         ↓
-TensorFlow/Keras MLP model
+NumpyMLP (18 → 128 → 64 → 1)
         ↓
 Phishing probability (sigmoid output)
         ↓
-Risk assessment + explanation
+Risk level + Explanation
         ↓
-Stored in localStorage
-        ↓
-Displayed in React dashboard
+Extension badge (SAFE/RISK) + Popup display
 ```
 
 ---
 
-## Dataset
+## Dataset & Features
 
-The project uses a CSV dataset (`dataset/url_features_extracted1.csv`) with URL-based engineered features.
+The model uses **18 engineered URL features**:
 
-### Feature Engineering
+| # | Feature | Description |
+|---|---------|-------------|
+| 1 | `url_length` | Total length of the URL string |
+| 2 | `has_ip_address` | URL contains IP address (1/0) |
+| 3 | `dot_count` | Number of dots in URL |
+| 4 | `https_flag` | Uses HTTPS protocol (1/0) |
+| 5 | `url_entropy` | Shannon entropy of URL string |
+| 6 | `token_count` | Number of URL tokens |
+| 7 | `subdomain_count` | Number of subdomains |
+| 8 | `query_param_count` | Number of query parameters |
+| 9 | `tld_length` | Length of top-level domain |
+| 10 | `path_length` | Length of URL path |
+| 11 | `has_hyphen_in_domain` | Domain contains hyphen (1/0) |
+| 12 | `number_of_digits` | Count of digit characters |
+| 13 | `tld_popularity` | TLD popularity score (1/0) |
+| 14 | `suspicious_file_extension` | Suspicious file extension (1/0) |
+| 15 | `domain_name_length` | Length of domain name |
+| 16 | `percentage_numeric_chars` | Percentage of numeric characters |
+| 17 | `uses_free_hosting` | ⭐ Detects ngrok, loca.lt, 000webhost, Google Sites, glitch.me, replit.app, etc. |
+| 18 | `brand_in_path` | ⭐ Detects brand impersonation in path/subdomain (e.g. "facebook" on a 3rd-party domain) |
 
-| # | Feature                  | Description                          |
-|---|--------------------------|--------------------------------------|
-| 1 | `url_length`             | Total length of the URL string       |
-| 2 | `has_ip_address`         | URL contains IP address (1/0)        |
-| 3 | `dot_count`              | Number of dots in URL                |
-| 4 | `https_flag`             | Uses HTTPS protocol (1/0)            |
-| 5 | `url_entropy`            | Shannon entropy of URL string        |
-| 6 | `token_count`            | Number of URL tokens                 |
-| 7 | `subdomain_count`        | Number of subdomains                 |
-| 8 | `query_param_count`      | Number of query parameters           |
-| 9 | `tld_length`             | Length of top-level domain           |
-| 10| `path_length`            | Length of URL path                   |
-| 11| `has_hyphen_in_domain`   | Domain contains hyphen (1/0)         |
-| 12| `number_of_digits`       | Count of digit characters            |
-| 13| `tld_popularity`         | TLD popularity score (1/0)           |
-| 14| `suspicious_file_extension` | Suspicious file extension (1/0)   |
-| 15| `domain_name_length`     | Length of domain name                |
-| 16| `percentage_numeric_chars` | Percentage of numeric characters   |
+> ⭐ Features 17 & 18 were added specifically to detect **modern phishing toolkits** like [zphisher](https://github.com/htr-tech/zphisher) that bypass traditional URL analysis by using HTTPS on free hosting services.
 
 ### ClassLabel
-
 - `0` = Phishing
 - `1` = Legitimate
-
-The target is converted internally: `y_phishing = 1` if `ClassLabel == 0`, so the sigmoid output directly represents **phishing probability**.
-
----
-
-## Preprocessing
-
-1. Load CSV dataset
-2. Remove missing labels and duplicates
-3. Handle invalid `subdomain_count` values (`-1` → NaN → median from training data)
-4. 80/20 stratified train/test split (`random_state=42`)
-5. StandardScaler fit on **training data only** (no data leakage)
-6. Save `scaler.pkl` and `feature_columns.pkl`
 
 ---
 
 ## Deep Learning Model
 
-**Architecture:** Feed-Forward Neural Network (MLP)
+**Architecture:** Pure-Numpy Feed-Forward Neural Network (MLP)
 
 ```
-Input(16) → Dense(128, ReLU) → BatchNorm → Dropout(0.30)
-          → Dense(64, ReLU)  → Dropout(0.20)
-          → Dense(32, ReLU)
-          → Dense(1, Sigmoid)
+Input(18) → Dense(128, ReLU) → Dense(64, ReLU) → Dense(1, Sigmoid)
 ```
 
-**Training Configuration:**
-- Optimizer: Adam
-- Loss: Binary Crossentropy
-- Metrics: Accuracy, Precision, Recall, AUC
-- Batch Size: 256
-- Max Epochs: 30
-- Callbacks: EarlyStopping, ReduceLROnPlateau
-
-**Evaluation Metrics** are saved to `model/training_metrics.json` and include accuracy, precision, recall, F1-score, ROC-AUC, and confusion matrix — all computed from the actual trained model.
+| Property | Value |
+|---|---|
+| Implementation | Pure NumPy (no TensorFlow/PyTorch) |
+| Initialization | He initialization |
+| Loss | Binary Cross-Entropy |
+| Optimizer | Gradient Descent |
+| Epochs | 3000 |
+| Learning Rate | 0.05 |
+| Test Accuracy | 100% |
+| Phishing Recall | 100% |
 
 ---
 
 ## Backend API
 
-| Method | Endpoint      | Description                     |
-|--------|---------------|---------------------------------|
-| GET    | `/`           | API status                      |
-| GET    | `/health`     | Health check (model loaded)     |
-| GET    | `/model-info` | Model metadata and metrics      |
-| POST   | `/predict`    | Analyze URL for phishing        |
+Base URL: `http://127.0.0.1:8000`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | API status |
+| GET | `/health` | Health check (model loaded) |
+| GET | `/model-info` | Model metadata and metrics |
+| POST | `/predict` | Analyze URL for phishing |
 
 ### POST /predict
 
 **Request:**
 ```json
-{
-  "url": "https://example.com"
-}
+{ "url": "https://example.com" }
 ```
 
 **Response:**
@@ -151,123 +186,68 @@ Input(16) → Dense(128, ReLU) → BatchNorm → Dropout(0.30)
 {
   "url": "https://example.com",
   "verdict": "Legitimate",
-  "phishing_probability": 0.08,
-  "legitimate_probability": 0.92,
+  "phishing_probability": 0.02,
+  "legitimate_probability": 0.98,
   "risk_level": "Low",
   "recommendation": "The URL appears relatively low risk...",
-  "features": { ... }
+  "features": { "url_length": 23, "https_flag": 1, "uses_free_hosting": 0, ... }
 }
 ```
 
-Interactive API docs available at: `http://127.0.0.1:8000/docs`
+Interactive API docs: `http://127.0.0.1:8000/docs`
 
 ---
 
-## Installation
+## Full Installation (Backend + Frontend + Extension)
 
 ### Prerequisites
-
-- Python 3.10+ with pip
+- Python 3.10+
 - Node.js 18+ with npm
-- Git
+- Google Chrome
 
 ### Setup
 
 ```bash
-# Clone the repository
-git clone <repository-url>
+# Clone
+git clone https://github.com/FineFur/PhishShieldAIDL.git
 cd PhishShieldAIDL
 
-# Install Python dependencies
+# Python dependencies
 pip install -r requirements.txt
 
-# Install frontend dependencies
-cd frontend
-npm install
-cd ..
+# Frontend dependencies
+cd frontend && npm install && cd ..
 ```
 
----
-
-## Running the Project
-
-### Step 1: Generate Dataset (if not present)
+### Running
 
 ```bash
-python dataset/generate_dataset.py
-```
-
-### Step 2: Train the Model
-
-```bash
-python model/train_model.py
-```
-
-### Step 3: Evaluate the Model
-
-```bash
-python model/evaluate_model.py
-```
-
-### Step 4: Start the Backend
-
-```bash
+# Terminal 1 — Backend
 cd backend
 uvicorn main:app --reload --host 127.0.0.1 --port 8000
-```
 
-### Step 5: Start the Frontend
-
-```bash
+# Terminal 2 — Frontend dashboard
 cd frontend
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+Frontend dashboard: `http://localhost:5173`
 
 ---
 
-## Testing
+## Retraining the Model (Optional)
 
-### Test URLs
+Only needed if you want to retrain with fresh data.
 
-| URL | Type |
-|-----|------|
-| `https://www.google.com` | Testing example |
-| `https://www.github.com` | Testing example |
-| `http://192.168.1.10/login.php` | Testing example |
-| `https://secure-login-example.com/account/verify` | Testing example |
+```bash
+# Step 1: Regenerate dataset
+python dataset/generate_dataset.py
 
-> **Note:** These are testing examples only. Do not assume their real-world security status based solely on this application.
+# Step 2: Retrain model
+python model/train_numpy_mlp.py
+```
 
----
-
-## Limitations
-
-1. The model only analyzes URL-level features
-2. It does not inspect webpage HTML or content
-3. It does not execute JavaScript
-4. It does not perform DNS reputation checks
-5. It does not guarantee website safety
-6. Newly emerging attack patterns may not be represented in the training dataset
-7. Dataset distribution can affect model performance
-8. Model probability is an estimate, not proof of malicious intent
-
----
-
-## Future Scope
-
-1. HTML-based phishing detection
-2. Screenshot-based webpage analysis
-3. QR-code URL scanning
-4. Browser extension
-5. Real-time threat intelligence integration
-6. WHOIS/DNS features
-7. Ensemble models
-8. Transformer-based URL models
-9. Explainable AI (SHAP, LIME)
-10. Cloud deployment
-11. Continuous model retraining
+> The repo already includes pre-trained weights (`model/numpy_mlp_weights.json`) and scaler (`model/scaler.pkl`) — retraining is **not required** to use the extension.
 
 ---
 
@@ -276,43 +256,32 @@ The application will be available at `http://localhost:5173`
 ```
 PhishShieldAIDL/
 ├── backend/
-│   ├── main.py                    # FastAPI application
-│   ├── feature_extractor.py       # URL feature extraction
-│   ├── schemas.py                 # Pydantic models
-│   ├── requirements.txt           # Backend dependencies
-│   └── utils/                     # Utility modules
+│   ├── main.py                 # FastAPI application
+│   ├── feature_extractor.py    # URL feature extraction (18 features)
+│   ├── schemas.py              # Pydantic models
+│   └── requirements.txt
 ├── dataset/
-│   ├── url_features_extracted1.csv # Training dataset
-│   └── generate_dataset.py        # Dataset generator (fallback)
-├── model/
-│   ├── train_model.py             # Model training script
-│   ├── preprocess.py              # Data preprocessing
-│   ├── evaluate_model.py          # Model evaluation
-│   ├── phishshield_model.keras    # Trained model
-│   ├── scaler.pkl                 # Feature scaler
-│   ├── feature_columns.pkl        # Feature column order
-│   └── training_metrics.json      # Evaluation metrics
+│   └── generate_dataset.py     # Dataset generator (includes zphisher URLs)
+├── extension/                  # ← Chrome Extension (load this folder)
+│   ├── manifest.json
+│   ├── background.js           # Service worker + API calls
+│   ├── content.js              # Auto-scan on page load
+│   ├── popup.html              # Extension popup UI
+│   ├── popup.js
+│   └── content.css
 ├── frontend/
-│   ├── package.json
-│   ├── index.html
 │   └── src/
-│       ├── main.jsx
 │       ├── App.jsx
-│       ├── App.css
 │       ├── components/
-│       │   ├── Sidebar.jsx
-│       │   ├── TopBar.jsx
-│       │   ├── StatCard.jsx
-│       │   ├── UrlScanner.jsx
-│       │   ├── ScanResult.jsx
-│       │   ├── FeatureCard.jsx
-│       │   ├── RecentScans.jsx
-│       │   └── EmptyState.jsx
 │       └── pages/
-│           ├── Dashboard.jsx
-│           ├── ScanHistory.jsx
-│           ├── SecurityTips.jsx
-│           └── Settings.jsx
+├── model/
+│   ├── train_numpy_mlp.py      # Training script (NumpyMLP)
+│   ├── preprocess.py           # Data preprocessing
+│   ├── evaluate_model.py       # Evaluation
+│   ├── numpy_mlp_weights.json  # ✅ Pre-trained model weights
+│   ├── scaler.pkl              # ✅ Pre-fitted scaler
+│   ├── feature_columns.pkl     # ✅ Feature column order
+│   └── training_metrics.json   # Training results
 ├── README.md
 ├── .gitignore
 └── requirements.txt
@@ -320,23 +289,25 @@ PhishShieldAIDL/
 
 ---
 
+## Limitations
+
+1. Analyzes URL-level features only — does not inspect page HTML or content
+2. Does not perform DNS/WHOIS reputation checks
+3. Does not use Google Safe Browsing or VirusTotal
+4. Requires the backend to be running locally on port 8000
+5. Model probability is an estimate, not proof of malicious intent
+
+---
+
 ## Academic Disclaimer
 
-This project is developed as an academic mini-project for MCA coursework. The phishing detection model performs **static URL feature analysis** using a deep-learning classifier. It does not:
-
-- Crawl or visit target websites
-- Perform browser sandboxing
-- Use WHOIS intelligence or DNS reputation
-- Access Google Safe Browsing or VirusTotal
-- Provide live threat intelligence
-
-The system analyzes URL string characteristics and provides a probability-based assessment. It should not be used as the sole basis for determining website safety in production environments.
+This project is developed as an academic mini-project for MCA (LP III) coursework. The phishing detection model performs **static URL feature analysis** using a deep-learning classifier. It should not be used as the sole basis for determining website safety in production environments.
 
 ---
 
 ## License
 
-This project is developed for educational purposes.
+Developed for educational purposes.
 
 ---
 
